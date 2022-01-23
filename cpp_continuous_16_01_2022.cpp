@@ -12,9 +12,39 @@
 #include <random>
 #include <forward_list>
 
+
 using namespace std;
 
 #define PI std::atan2(0, -1)
+
+template <typename T>
+void Out(T v)
+{
+	for (auto it : v)
+		cout << it << " ";
+
+
+	cout << "\n";
+}
+
+
+bool Cmp2(int l, int r)
+{
+	return l > r;
+}
+
+
+struct Cmp
+{
+	bool operator() (int l, int r) const
+	{
+		// x  = 5;
+		return (l < r);
+	}
+
+	int x;
+
+};
 
 int main()
 {	
@@ -24,37 +54,80 @@ int main()
 	freopen_s(&OUT, "output.txt", "w", stdout);
 #endif
 
-	int n; cin >> n;
+	multiset<int, Cmp> ms;
 
-	vector<int> v(n);
-
-
-
-	for (int i = 1, j = 1; j < n; ++i, j *= i) // O(log (n))
-	{
-		cout << "1";
-	}
-
-	//O(  n! )
-	// O(log (n))
-
-
-	for (vector<int>::iterator iter = v.begin(); iter != v.end(); ++iter)
-	{
-		auto it = (*iter);
-	}
-
-
-	for (const auto& it : v) // for - range based
-	{
-		cout << it;
-	}
-
-	// f_it   ->
-	// b_it   <->
-	// r_it   +x  -x
-	
+	//abs();
 
 	
+
+	ms.insert(10);
+
+	ms.insert(9);
+
+	ms.insert(11);
+
+	ms.insert(11);
+
+	ms.insert(11);
+
+	ms.insert(11);
+
+	ms.insert(11);
+
+	ms.insert(9);
+
+	ms.insert(9);
+
+	ms.insert(9);
+
+	ms.insert(9);
+
+	ms.insert(9);
+
+	ms.count(9);
+
+	Out(ms);
+
+	set< int >  s;
+
+	s.insert(10);
+
+	s.insert(9);
+
+	s.insert(11);
+
+	s.insert(11);
+
+	s.insert(11);
+
+	s.insert(11);
+
+	s.insert(11);
+
+
+
+
+
+	Out(s);
+
+	vector<int> v;
+
+	v.push_back(10);
+	v.push_back(10);
+	v.push_back(10);
+	v.push_back(10);
+	v.push_back(10);
+
+
+	Out(v);
+
+	//cout <<  s.erase(15);
+
+
+
+
+
+
+
 
 }
