@@ -50,6 +50,64 @@ auto sum2(T v)
 }
 
 
+int f(int t)
+{
+	return (t * 13 + 10) % 20;
+}
+
+struct node
+{
+	int val;
+
+
+	node* l = 0;
+	node* r = 0;
+};
+
+
+
+struct tree
+{
+	node* root = 0;
+
+
+	void insert(int val)
+	{
+		insert_rec(root, val);
+	}
+
+private:
+	void insert_rec(node* n, int val)
+	{
+		if (n == 0)
+		{
+			n = new node;
+			n->val = val;
+			return;
+		}
+
+		if (val == n->val) return;
+
+		if (val < n->val)
+		{
+			insert_rec(n->l, val);
+			return;
+		}
+		else
+		{
+			insert_rec(n->r, val);
+			return;
+		}
+
+	}
+
+
+
+
+};
+
+
+
 int main()
 {	
 #ifdef _DEBUG
@@ -69,54 +127,100 @@ int main()
 
 	cout << sum2 (  vector<int>{ 2, 3, 4, 3, 43, 43, 4, 343, 4, 34, 214, 34, 34, 43, 1 } ) << "\n";
 
-	int a = 67534;
+	//int a = 67534;
 
-	double d = 725.63;
+	//double d = 725.63;
 
-	string s = "404";
+	//string s = "404";
 
-	const char ch = 75;
+	//const char ch = 75;
 
-	//const_cast<char>(ch) = 10;
+	////const_cast<char>(ch) = 10;
 
-	//cout << ch <<"\n";
+	////cout << ch <<"\n";
 
-	//reinterpret_cast<int> 
+	////reinterpret_cast<int> 
 
-	//dynamic_cast
+	////dynamic_cast
 
-	//safe_cast
+	////safe_cast
 
-	double* dd = &d;
+	//double* dd = &d;
 
-	int* i = &a;
+	//int* i = &a;
 
-	void* v = i;
+	//void* v = i;
 
-	v = dd;
+	//v = dd;
 
-	cout << i << "\n" << v << "\n";
+	//cout << i << "\n" << v << "\n";
 
-	cout << *i << "\n" << *((int*)v) 
-		<< "\n" << *((__int64*)v) 
-		<< "\n" << *((double*)v) << "\n" << *(static_cast<double*>(v))
+	//cout << *i << "\n" << *((int*)v) 
+	//	<< "\n" << *((__int64*)v) 
+	//	<< "\n" << *((double*)v) << "\n" << *(static_cast<double*>(v))
 
 
-		<< "\n" << *((float*)v);
-
+	//	<< "\n" << *((float*)v);
 
 	//memory
 
 	// Одиночное исп
 	unique_ptr<int> pt;
 
-	int* ii = new int;
+	{
+		int* ii = new int;
 
-	//delete i;
-	
+		shared_ptr<int> spt(ii);
+
+
+		shared_ptr<int> q2(new int);
+
+
+
+		//delete ii;
+	}
+
+	{
+		int timer;
+
+		// Одновременное 
+		
+
+		timer = 10;
+	}
+	//timer = 10;
+
 	_CrtDumpMemoryLeaks();
 
-	// Одновременное 
-	shared_ptr<int> spt();
+	int i = 10;
+
+	set<int> s;
+
+	int T = 0;
+	while (!s.count(i)) // Когда найден период
+	{
+		++T;
+		s.insert(i);
+		i = f(i);
+	}
+
+	cout << "\n" << T;
+
+	//pair<string, int>
+	map<string, int> dir = { {"zzz", 99}, {"asas", 10}, {"www", 3} ,  {"ieoe", 4},  {"zzz", 94324324} };
+
+	map<int, string> rev;
+
+	for (auto it : dir)
+	{
+		rev[it.second] = it.first;
+	}
+
+
+	
+
+
+
+
 
 }
