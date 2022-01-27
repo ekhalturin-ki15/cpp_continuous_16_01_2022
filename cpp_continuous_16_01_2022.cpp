@@ -13,6 +13,7 @@
 #include <forward_list>
 #include <unordered_set>
 #include <memory>
+#include <stack>
 
 
 #define _CRTDBG_MAP_ALLOC
@@ -23,88 +24,60 @@ using namespace std;
 
 #define PI std::atan2(0, -1)
 
+long long a, k, b, m, x;
+double P, Pa, Pb;
 
 
-template <typename T>
-T sum(T first)
+long long ceil(long long a, long long b)
 {
-	return first;
-}
-
-template <typename T, typename ...Arg>
-T sum(T first, Arg... other)
-{
-	return first + sum(other...);
+	return (a) / b;
 }
 
 
-template <typename T>
-auto sum2(T v)
+long long f(long long d)
 {
-	auto ret = v.front();
-	for (auto it : v)
-	{
-		ret += it;
-	}
-	return ret;
+	long long q = (d - ceil(d,k));
+	long long u = (d - ceil(d, m));
+
+	double Pq = logl(q) + Pa;
+	double Pu = logl(q) + Pb;
+
+	if ((P < Pq) || (P < Pu)) return true;
+
+	long long res = q * a + u * b;
+	return (res >= x);
+
 }
 
 
-int f(int t)
+const long long M = 1e9 + 9;
+
+// a ^ (p - 1) = 1 (mod p)    | /a
+// 
+// a * x - 1 = 0 (mod M)
+// a * x  = 1 (mod M)
+// a * a^-1  = 1 (mod M)
+// 
+// a ^ (p - 2) = a^-1  (mod p) 
+// 
+// 
+// 
+// 5^ 2 = 1 (3)
+
+
+long long bin_pow(long long a, long long p, long long m)
 {
-	return (t * 13 + 10) % 20;
+	if (p == 1) return a;
+
+	long long x = bin_pow(a, p / 2, m);
+
+	x = (x * x) % m;
+
+	if (p % 2 == 1) x = (x * a) % m;
+
+	return x;
+
 }
-
-struct node
-{
-	int val;
-
-
-	node* l = 0;
-	node* r = 0;
-};
-
-
-
-struct tree
-{
-	node* root = 0;
-
-
-	void insert(int val)
-	{
-		insert_rec(root, val);
-	}
-
-private:
-	void insert_rec(node* n, int val)
-	{
-		if (n == 0)
-		{
-			n = new node;
-			n->val = val;
-			return;
-		}
-
-		if (val == n->val) return;
-
-		if (val < n->val)
-		{
-			insert_rec(n->l, val);
-			return;
-		}
-		else
-		{
-			insert_rec(n->r, val);
-			return;
-		}
-
-	}
-
-
-
-
-};
 
 
 
@@ -116,109 +89,25 @@ int main()
 	freopen_s(&OUT, "output.txt", "w", stdout);
 #endif
 
-	//printf("", 2, 3, 3, 2, 2 );
 
-	//2 + sum(3, 4, 3, 43, 43, 4, 343, 4, 34)
-	cout << sum(2,3,4,3,43,43,4,343,4,34) << "\n";
+	list<int> l;
 
-	cout << sum(2,3,4,3,43,43,4,343,4,34, 214, 34, 34.20, 43,1) << "\n";
-
-	cout << sum2<vector<int>> ({ 2, 3, 4, 3, 43, 43, 4, 343, 4, 34, 214, 34, 34, 43, 1 } ) << "\n";
-
-	cout << sum2 (  vector<int>{ 2, 3, 4, 3, 43, 43, 4, 343, 4, 34, 214, 34, 34, 43, 1 } ) << "\n";
-
-	//int a = 67534;
-
-	//double d = 725.63;
-
-	//string s = "404";
-
-	//const char ch = 75;
-
-	////const_cast<char>(ch) = 10;
-
-	////cout << ch <<"\n";
-
-	////reinterpret_cast<int> 
-
-	////dynamic_cast
-
-	////safe_cast
-
-	//double* dd = &d;
-
-	//int* i = &a;
-
-	//void* v = i;
-
-	//v = dd;
-
-	//cout << i << "\n" << v << "\n";
-
-	//cout << *i << "\n" << *((int*)v) 
-	//	<< "\n" << *((__int64*)v) 
-	//	<< "\n" << *((double*)v) << "\n" << *(static_cast<double*>(v))
+	list<int>::iterator mid = l.begin(); // size/2 в меньшую
+	int dist = 0;
 
 
-	//	<< "\n" << *((float*)v);
-
-	//memory
-
-	// Одиночное исп
-	unique_ptr<int> pt;
-
-	{
-		int* ii = new int;
-
-		shared_ptr<int> spt(ii);
-
-
-		shared_ptr<int> q2(new int);
-
-
-
-		//delete ii;
-	}
-
-	{
-		int timer;
-
-		// Одновременное 
-		
-
-		timer = 10;
-	}
-	//timer = 10;
-
-	_CrtDumpMemoryLeaks();
-
-	int i = 10;
-
-	set<int> s;
-
-	int T = 0;
-	while (!s.count(i)) // Когда найден период
-	{
-		++T;
-		s.insert(i);
-		i = f(i);
-	}
-
-	cout << "\n" << T;
-
-	//pair<string, int>
-	map<string, int> dir = { {"zzz", 99}, {"asas", 10}, {"www", 3} ,  {"ieoe", 4},  {"zzz", 94324324} };
-
-	map<int, string> rev;
-
-	for (auto it : dir)
-	{
-		rev[it.second] = it.first;
-	}
-
-
+	mid++;
 	
 
+	mid--;
+
+	int val;
+
+	l.insert(mid, val);
+
+	l.push_back(val);
+
+	l.pop_front();
 
 
 
