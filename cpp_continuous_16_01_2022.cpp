@@ -111,6 +111,43 @@ void permutation(int step, int choose)
 
 }
 
+typedef vector<vector<long long>> VVLL;
+
+long long M = 1e9 + 7;
+long long n;
+VVLL A, B, C, A_N;
+
+
+
+VVLL mul(VVLL A, VVLL B, long long M)
+{
+    if (A.size() != B[0].size()) return {};
+
+    VVLL ret(A[0].size(), vector<long long>(B.size()));
+
+    for (int y = 0; y < A[0].size(); ++y)
+    {
+        for (int x = 0; x < A.size(); ++x)
+        {
+            ret[y][x] = (ret[y][x] + A[y][x] * B[x][y]) % M;
+        }
+    }
+
+    return ret;
+}
+
+VVLL bin_pow(VVLL A, long long n, long long M)
+{
+    VVLL C = bin_pow(A, n / 2, M);
+    VVLL ret = mul(C, C, M);
+    if (n % 2 == 1)
+    {
+        ret = mul(ret, A, M);
+    }
+
+    return ret;
+}
+
 int main()
 {
 #ifdef _DEBUG
@@ -119,19 +156,21 @@ int main()
     freopen_s(&OUT, "output.txt", "w", stdout);
 #endif
 
-    cin >> n;
-    v.resize(n);
+    cin >> n; 
 
-    for (auto& it : v) cin >> it;
+    A = { {0, 1}, {1, 1} }; // f_n = f_n-1  + f_n-2
 
-    cin >> k;
-    buf.resize(k);
-
-    C = 1;
-
-    permutation(0, 0);
+    B = { {1, 1} }; // f0 = 1, f1 =1
+    // [y][x]
+    // W = 1 = B.size();
+    // H = 2 = B[0].size()
 
 
+    A_N = bin_pow(A , n, M);
+
+
+    cout << A_N.back().back();
+   
 
 
 }
