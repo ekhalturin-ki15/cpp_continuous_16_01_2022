@@ -1,115 +1,95 @@
 ﻿#include <iostream>
-#include <fstream>
 #include <set>
 #include <vector>
-#include <list>
-#include <queue>
-#include <bitset>
-#include <map>
-#include <string>
-#include <unordered_map>
-#include <algorithm>
-#include <random>
-#include <forward_list>
-#include <unordered_set>
-#include <memory>
-#include <stack>
-
-
-#define _CRTDBG_MAP_ALLOC
-#include <cstdlib>
-#include <crtdbg.h>
 
 using namespace std;
 
-#define PI std::atan2(0, -1)
+int i;
 
-long long a, k, b, m, x;
-double P, Pa, Pb;
-
-
-long long ceil(long long a, long long b)
+//factor(10) ~ 3 * 10^6
+long long factor(int n)
 {
-	return (a) / b;
+    long long ret = 1;
+    for (int i = 2; i <= n; ++i) ret *= i;
+    return ret;
 }
 
 
-long long f(long long d)
+void Out(const vector<int>& buf)
 {
-	long long q = (d - ceil(d,k));
-	long long u = (d - ceil(d, m));
 
-	double Pq = logl(q) + Pa;
-	double Pu = logl(q) + Pb;
-
-	if ((P < Pq) || (P < Pu)) return true;
-
-	long long res = q * a + u * b;
-	return (res >= x);
-
+    for (int i = 0; i < buf.size() - 1; ++i) cout << buf[i] <<",";
+    cout << buf.back() << "\n";
 }
 
 
-const long long M = 1e9 + 9;
-
-// a ^ (p - 1) = 1 (mod p)    | /a
-// 
-// a * x - 1 = 0 (mod M)
-// a * x  = 1 (mod M)
-// a * a^-1  = 1 (mod M)
-// 
-// a ^ (p - 2) = a^-1  (mod p) 
-// 
-// 
-// 
-// 5^ 2 = 1 (3)
-
-
-long long bin_pow(long long a, long long p, long long m)
+// какой шаг, буффер для вывода, откуда брать значения
+void permutation(int step, vector<int>& buf, const vector<int>& v, set<int>& s)
 {
-	if (p == 1) return a;
+    //Условие завершения рекурсии
 
-	long long x = bin_pow(a, p / 2, m);
+    if (step == v.size())
+    {
+        //Нет вызова функции
+        //buf[0] = 10;
 
-	x = (x * x) % m;
+        Out(buf);
 
-	if (p % 2 == 1) x = (x * a) % m;
+        return;
+    }
+    //Тело рекурсии
+    //Может произойти ещё вызов
 
-	return x;
+    for (auto it : v)
+    {
+        if (s.count(it)) continue;
 
+        s.insert(it);
+        buf[step] = it;
+
+        permutation(step + 1, buf, v, s);
+
+        //buf[step] = 0;
+        s.erase(it);
+
+    }
 }
-
 
 
 int main()
-{	
+{
 #ifdef _DEBUG
-	FILE* IN, * OUT;
-	freopen_s(&IN, "input.txt", "r", stdin);
-	freopen_s(&OUT, "output.txt", "w", stdout);
+    FILE* IN, * OUT;
+    freopen_s(&IN, "input.txt", "r", stdin);
+    freopen_s(&OUT, "output.txt", "w", stdout);
 #endif
 
+    vector<int> v = {1, 5, 4, 3, 2, 10};
 
-	list<int> l;
+    // n =  0 .. 10
+    // n < 10^6 O(n)   O(n * log(n))
+    // n < 2 * 10^5  O(n * log(n))
+    // n < 10^3 O(10^3)     1 сек 10^6 
+    // 
+    // 
+    // n < 12  O(!n)
 
-	list<int>::iterator mid = l.begin(); // size/2 в меньшую
-	int dist = 0;
+    int n = v.size();
 
+    vector<int> buf(n);
+    // step , buf, v
 
-	mid++;
-	
-
-	mid--;
-
-	int val;
-
-	l.insert(mid, val);
-
-	l.push_back(val);
-
-	l.pop_front();
+    set<int> s;
+    permutation(0, buf, v, s);
 
 
+
+
+
+    /*for (int i = 0; i < factor(n); ++i)
+    {
+
+    }*/
 
 
 }
