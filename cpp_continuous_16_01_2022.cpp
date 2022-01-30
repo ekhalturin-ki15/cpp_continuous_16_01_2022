@@ -3,17 +3,23 @@
 #include <vector>
 #include <algorithm>
 
-
-//#include 
-
 using namespace std;
-
 
 typedef vector<vector<long long>> VVLL;
 
 long long M = 1e17 + 7;
-long long n;
+
 VVLL A, B, C, A_N;
+
+#ifdef __TIMESTAMP__
+    long long n;
+    string s = __TIMESTAMP__;
+#endif
+
+#ifdef __TIME__
+    string ss = __TIME__;
+#endif
+
 
 VVLL mul(VVLL A, VVLL B, long long M)
 {
@@ -60,6 +66,8 @@ int main()
     freopen_s(&IN, "input.txt", "r", stdin);
     freopen_s(&OUT, "output.txt", "w", stdout);
 #endif
+    
+    cout << ss <<"\n444";
 
     cin >> n; 
 
