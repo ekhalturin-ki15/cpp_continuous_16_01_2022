@@ -73,6 +73,44 @@ void permutation(int step, VI& buf, const VI& v,
 }
 
 
+VI buf;
+VI v;
+int n, k, C;
+
+multiset<int> ms;
+set< multiset<int> > pull;
+
+void permutation(int step, int choose)
+{
+    if (choose == k)
+    {
+
+        if (pull.count(ms))
+            return;
+
+        Out(buf, C++);
+        pull.insert(ms);
+
+        return;
+    }
+
+    if (step == n)
+        return;
+
+
+    //Сама рекурсия
+    permutation(step + 1, choose);
+
+
+    ms.insert(v[step]);
+    buf[choose] = v[step];
+
+    permutation(step + 1, choose + 1);
+    ms.erase(ms.find(v[step]));
+
+
+}
+
 int main()
 {
 #ifdef _DEBUG
@@ -81,62 +119,19 @@ int main()
     freopen_s(&OUT, "output.txt", "w", stdout);
 #endif
 
-    VI v = {1, 5, 4, 3, 2, 10};
-    int count = 1;
-    while (std::next_permutation(v.begin(), v.end())) // next_permutation возврат true если отсортировано
-    {
-        Out(v, count++);
-    }
+    cin >> n;
+    v.resize(n);
+
+    for (auto& it : v) cin >> it;
+
+    cin >> k;
+    buf.resize(k);
+
+    C = 1;
+
+    permutation(0, 0);
 
 
-
-
-    //return 0;
-
-
-
-    // n =  0 .. 10
-    // n < 10^6 O(n)   O(n * log(n))
-    // n < 2 * 10^5  O(n * log(n))
-    // n < 10^3 O(10^3)     1 сек 10^6 
-    // 
-    // 
-    // n < 12  O(!n)
-
-    int n = v.size();
-
-
-
-
-
-    VI buf(n);
-    // step , buf, v
-
-
-
-
-
-
-
-
-    set<int> s;
-
-
-    //cin >> K;
-    K = 3;
-    count = 1;
-    bool flag = true;
-    permutation(0, buf, v, s, count, *std::min_element(v.begin(), v.end()), flag);
-
-
-
-
-    count = 10;
-    for (int i = 0; i < factor(n); ++i)
-    {
-        Out(v, count+=10);
-        std::next_permutation(v.begin(), v.end());
-    }
 
 
 }
