@@ -1,10 +1,14 @@
 ﻿#include <iostream>
 #include <set>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
 int i;
+
+typedef vector<int> VI;
+
 
 //factor(10) ~ 3 * 10^6
 long long factor(int n)
@@ -15,26 +19,35 @@ long long factor(int n)
 }
 
 
-void Out(const vector<int>& buf)
+void Out(const VI& buf, const int& count)
 {
-
-    for (int i = 0; i < buf.size() - 1; ++i) cout << buf[i] <<",";
+    cout << count << " | ";
+    for (int i = 0; i < buf.size() - 1; ++i) cout << buf[i] <<", ";
     cout << buf.back() << "\n";
 }
 
 
+int K;
+
+
 // какой шаг, буффер для вывода, откуда брать значения
-void permutation(int step, vector<int>& buf, const vector<int>& v, set<int>& s)
+void permutation(int step, VI& buf, const VI& v, 
+    set<int>& s, int& count, const int& pred, bool flag)
 {
     //Условие завершения рекурсии
 
-    if (step == v.size())
+    if (step == K)
     {
+        if (flag)
+        {
+            cout << "Отсортировано ";
+        }
+
         //Нет вызова функции
         //buf[0] = 10;
 
-        Out(buf);
-
+        Out(buf, count);
+        ++count;
         return;
     }
     //Тело рекурсии
@@ -47,10 +60,14 @@ void permutation(int step, vector<int>& buf, const vector<int>& v, set<int>& s)
         s.insert(it);
         buf[step] = it;
 
-        permutation(step + 1, buf, v, s);
+        bool tmp_flag = flag;
+
+        if (pred > it) flag = false;
+        permutation(step + 1, buf, v, s, count, it, flag);
 
         //buf[step] = 0;
         s.erase(it);
+        flag = tmp_flag;
 
     }
 }
@@ -64,7 +81,19 @@ int main()
     freopen_s(&OUT, "output.txt", "w", stdout);
 #endif
 
-    vector<int> v = {1, 5, 4, 3, 2, 10};
+    VI v = {1, 5, 4, 3, 2, 10};
+    int count = 1;
+    while (std::next_permutation(v.begin(), v.end())) // next_permutation возврат true если отсортировано
+    {
+        Out(v, count++);
+    }
+
+
+
+
+    //return 0;
+
+
 
     // n =  0 .. 10
     // n < 10^6 O(n)   O(n * log(n))
@@ -76,20 +105,38 @@ int main()
 
     int n = v.size();
 
-    vector<int> buf(n);
+
+
+
+
+    VI buf(n);
     // step , buf, v
 
+
+
+
+
+
+
+
     set<int> s;
-    permutation(0, buf, v, s);
+
+
+    //cin >> K;
+    K = 3;
+    count = 1;
+    bool flag = true;
+    permutation(0, buf, v, s, count, *std::min_element(v.begin(), v.end()), flag);
 
 
 
 
-
-    /*for (int i = 0; i < factor(n); ++i)
+    count = 10;
+    for (int i = 0; i < factor(n); ++i)
     {
-
-    }*/
+        Out(v, count+=10);
+        std::next_permutation(v.begin(), v.end());
+    }
 
 
 }
