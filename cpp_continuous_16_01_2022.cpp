@@ -90,10 +90,12 @@ int main()
 	rect(n);
 	cout << answer[n] << "\n";
 	for (auto it : descript_answer[n])
-	{
 		cout << it.first << " " << it.second << "\n";
 
-	}
+	// Флойд
+	// Форда Белмана
+
+	//
 
 
 
