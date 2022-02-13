@@ -28,7 +28,7 @@ int rect(int n)
 			{ v[n - 2].second, v[n - 1].second } };
 		goto end;
 	case 4:
-		answer[4] = v[4].first - v[3].first + rect(2);
+		answer[n] = v[n].first - v[n - 1].first + rect(n - 2);
 		descript_answer[n] = { { v[n - 1].second, v[n].second },
 			{ v[n - 3].second, v[n - 2].second } };
 	end:
@@ -51,6 +51,8 @@ int rect(int n)
 		descript_answer[n].push_back({ v[n - 1].second, v[n].second });
 		descript_answer[n].push_back({ v[n - 2].second, v[n - 1].second });
 	}
+	
+	return answer[n];
 
 	//return answer[n] = min(v[n].first - v[n - 1].first + rect(n - 2),
 	//	v[n].first - v[n - 2].first + rect(n - 3));
@@ -73,6 +75,7 @@ int main()
 	cin >> n;
 	v.resize(n);
 	answer.resize(n + 1);
+	descript_answer.resize(n + 1);
 
 	int i = 0;
 	for (auto& it : v)
@@ -84,30 +87,17 @@ int main()
 	sort(v.begin(), v.end());
 	v.push_front({ 0, -1 });
 
+	rect(n);
+	cout << answer[n] << "\n";
+	for (auto it : descript_answer[n])
+	{
+		cout << it.first << " " << it.second << "\n";
 
-	cout << rect(n);
+	}
+
 
 
 	return 0;
 
-
-
-
-
-	answer[2] = v[2] - v[1];
-
-	// Условие ? Если верно : Если ложь;
-
-	answer[2] *= ((answer[2] < 0) ? -1 : 1);
-	answer[3] = v[3] - v[1];
-	answer[4] = v[4] - v[3] + answer[2];
-
-	for (int i = 5; i <= n; ++i)// Мин Макс
-	{
-		answer[i] = min(v[i] - v[i - 1] + answer[i - 2], v[i] - v[i - 1] + v[i - 1] - v[i - 2] + answer[i - 3]);
-	}
-
-
-	cout << answer[n];
 
 }
