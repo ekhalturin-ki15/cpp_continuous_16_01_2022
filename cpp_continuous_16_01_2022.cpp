@@ -69,6 +69,18 @@ int& F()
 	return a;
 }
 
+
+enum Type
+{
+	sum = 1,
+	update = 2
+};
+/// <summary>
+/// 
+/// </summary>
+/// <returns>
+/// 
+/// </returns>
 template <typename T>
 ostream& operator<<(ostream& out, vector<T> v)
 {
@@ -113,108 +125,175 @@ int main()
 	freopen_s(&OUT, "output.txt", "w", stdout);
 #endif
 
-	//int l, r;
 
-	//[l  r)
-	//[l m)  F(m)  [m r)
-	//
-
-	//  <  == >
-	// [l  m1) [m1 m2) [m2 r)
-	// F(m1, m2)
-	//Сокр в 1.5 раза
-
-	// TTTTFTTTT
-	// TTT >  TFT
-	// TFT <  TTT
-	// TTT == TTT
-
-	// В 3 раза сокр
+	// M*Log(N)
+	// M
+	int n;
+	bool bIsEmpty;
 
 
-	set<int> s;
-
-	set< set <int> > l;
-
-
-	int ii = 1'000'000'000'000;
-
-	vector < vector < int >> vv = 
-	{ {29 , 3, 45, 3, 32},{2454 , 3, 45, 3, 32}, {5,33, 223, 54,3}, {43} };
+	cin >> n;
+	vector<int> v(n);
+	
 
 
-	cout << (F() = 10) << "\n";
+	for (auto& it : v) 
+		cin >> it;
 
-	cout << F() << "\n";
-	F() = 10;
+	vector<int> cached = v;
 
-	sort(vv.begin(), vv.end() );
-
-	cout << vv;
+	///for ()
+	map<pair<int, int>, int > s;
 
 
-	unordered_set< int  > us;
+	// N^2
+	for (int l = 0; l < n; ++l)
+	{
+		int pred = 0;
+		for (int r = l; r < n; ++r)
+		{
+			pred += v[r];
+			s[{l, r}] = pred;
+		}
+	}
 
-	vector<int> a = { 3, 5, 43, 2, 5, 2, 454 };
-
-	//make_heap(a.begin(), a.end());
-	//pop_heap(a.begin(), a.end());
-	//a.push_back(10); push_heap(a.begin(), a.end());
 	
 
 
 
-
-	priority_queue<int, vector<int> > q(a.begin(), a.end()); 
-
-	q.top();
-	q.pop();
-	q.push(6);
-
-
-	map<string, int> m;
-
-
-	deque<int> dq;
-	map <deque<int>, int> ma;
-
-	int n, k;
-	cin >> n >> k;
-
-	dq.resize(k);
-	for (auto& it : dq) cin >> it;
-	ma[dq]++;
-
-
-	for (int i = k; i < n; ++i)
+	vector<int> pref_sum(n + 1);
+	int pred = 0;
+	for (int r = 1; r <= n; ++r)
 	{
-		dq.pop_front();
-		int a; cin >> a;
-		dq.push_back(a);
-		ma[dq]++;
+		pred += v[r-1];
+		pref_sum[r] = pred;
+	}
+
+	int m; cin >> m;
+
+	vector<tuple<Type, int, int>> req(m);
+	for (int i = 0; i < m; ++i)
+	{
+		auto& [type, l, r] = req[i];
+		int j;
+		cin >> j >> l >> r;
+		type = static_cast<Type>(j);
+
+	}
+
+	//В лоб
+	cout << "----------Brute-------------------\n";
+	for (int i = 0; i < m; ++i)
+	{
+		auto& [type, l, r] = req[i];
+
+		int sum = 0;
+
+		switch (type)
+		{
+		case Type::sum:
+			
+			// O(n * m)
+			for (int i = l; i <= r; ++i) sum += v[i]; // (O(n))
+
+			cout << sum << "\n";
+			break;
+
+		case Type::update:
+
+			v[l] = r;
+			cout << "Update\n";
+			break;
+		}
+
+	}
+
+	cout << "----------Pref-------------------\n";
+	v = cached;
+	//Префикс суммы
+	for (int i = 0; i < m; ++i)
+	{
+		auto& [type, l, r] = req[i];
+
+		switch (type)
+		{
+		case Type::sum:
+			cout << pref_sum[r + 1] - pref_sum[l] << "\n";
+			break;
+
+		case Type::update:
+
+			// O(n * m)
+			for (int i = l; i < n; ++i)
+				pref_sum[i + 1] +=  r - v[l];// не v[i];
+			cout << "Update\n";
+			break;
+		}
+	}
+
+	cout << "----------Sqrt-------------------\n";
+	v = cached;
+	//Корневая декомпозиция
+
+	int size_group = sqrt(n); // Кол-во эл внутри каждой группы
+	vector<int> sqrt_v(n / size_group);
+
+	for (int i = 0; i < sqrt_v.size() * size_group; ++i)
+	{
+		sqrt_v[i / size_group] += v[i];
 	}
 
 
-	for (auto it : ma)
+	for (int i = 0; i < m; ++i)
 	{
-		//it.first;
-		//it.second;
-		auto [key, amount] = it; // 17 ccp
+		auto& [type, l, r] = req[i];
 
-		cout << key << " | " << amount << "\n";
+		int sum = 0;
+		switch (type)
+		{
+		case Type::sum:
+			
+			// O(sqrt(N) + sqrt(N) * m = O(sqrt(N) * m) против O(N * m)
+
+			for (int i = l; 
+				i < min(r + 1, 
+					((l / size_group) + 1) * size_group);
+				++i)
+				sum += v[i];
+
+			int group;
+			for (group = ((l / size_group) + 1); group< (r / size_group); ++group)
+				sum += sqrt_v[group];
+
+			for (int i = group * size_group; i <= r; ++i)
+				sum += v[i];
+
+			cout << sum << "\n";
+			break;
+
+		case Type::update:
+
+			// O(n * m)
+			
+			sqrt_v[l / size_group] += r - v[l];
+			v[l] = r;
+
+			cout << "Update\n";
+			break;
+		}
 	}
 
 
 
 
 
-	// M*Log(N)
-	// M
 
-	map<pair<int, int>, int > sum;
+
+
+
 
 	// N^2
-	for ()
+	///for ()
 
 
 
