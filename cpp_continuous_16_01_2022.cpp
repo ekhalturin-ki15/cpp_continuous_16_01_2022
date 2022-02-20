@@ -2,6 +2,10 @@
 #include <vector>
 #include <algorithm>
 #include <queue>
+#include <regex>
+#include <set>
+#include <unordered_set>
+
 using namespace std;
 
 vector<int> answer; //[2] [3]  [4] 
@@ -58,48 +62,103 @@ int rect(int n)
 	//	v[n].first - v[n - 2].first + rect(n - 3));
 }
 
+int& F() 
+{
+	int a;
+	return a;
+}
+
+template <typename T>
+ostream& operator<<(ostream& out, vector<T> v)
+{
+	for (const auto& it : v)
+	{
+		out << it << " ";
+	}
+	out << "\n";
+	return out;
+}
 
 
 int main()
 {
-
 #ifdef _DEBUG
 	FILE* IN, * OUT;
 	freopen_s(&IN, "input.txt", "r", stdin);
 	freopen_s(&OUT, "output.txt", "w", stdout);
 #endif
 
+	//int l, r;
 
-
-	int n;
-	cin >> n;
-	v.resize(n);
-	answer.resize(n + 1);
-	descript_answer.resize(n + 1);
-
-	int i = 0;
-	for (auto& it : v)
-	{
-		cin >> it.first;
-		it.second = i++;
-	}
-
-	sort(v.begin(), v.end());
-	v.push_front({ 0, -1 });
-
-	rect(n);
-	cout << answer[n] << "\n";
-	for (auto it : descript_answer[n])
-		cout << it.first << " " << it.second << "\n";
-
-	// Флойд
-	// Форда Белмана
-
+	//[l  r)
+	//[l m)  F(m)  [m r)
 	//
 
+	//  <  == >
+	// [l  m1) [m1 m2) [m2 r)
+	// F(m1, m2)
+	//Сокр в 1.5 раза
+
+	// TTTTFTTTT
+	// TTT >  TFT
+	// TFT <  TTT
+	// TTT == TTT
+
+	// В 3 раза сокр
 
 
-	return 0;
+	set<int> s;
+
+	set< set <int> > l;
 
 
+	int ii = 1'000'000'000'000;
+
+	vector < vector < int >> vv = 
+	{ {29 , 3, 45, 3, 32},{2454 , 3, 45, 3, 32}, {5,33, 223, 54,3}, {43} };
+
+
+	cout << (F() = 10) << "\n";
+
+	cout << F() << "\n";
+	F() = 10;
+
+	sort(vv.begin(), vv.end() );
+
+	cout << vv;
+
+
+	unordered_set< int  > us;
+
+	vector<int> a = { 3, 5, 43, 2, 5, 2, 454 };
+
+	//make_heap(a.begin(), a.end());
+	//pop_heap(a.begin(), a.end());
+	//a.push_back(10); push_heap(a.begin(), a.end());
+	
+
+
+
+
+	priority_queue<int, vector<int> > q(a.begin(), a.end()); 
+
+	q.top();
+	q.pop();
+	q.push(6);
+
+
+
+
+
+
+	//i = i | (i + 1)
+	//i = (i & (i + 1)) - 1)
+
+	/*std::string s = "Some people, when confronted with a problem, think "
+		"\"I know, I'll use regular expressions.\" "
+		"Now they have two problems.";
+
+	std::regex long_word_regex("(\\w{7,})");
+	std::string new_s = std::regex_replace(s, long_word_regex, "[$&]");
+	std::cout << new_s << '\n';*/
 }
