@@ -4,6 +4,7 @@
 #include <queue>
 #include <regex>
 #include <set>
+#include <map>
 #include <unordered_set>
 
 using namespace std;
@@ -79,6 +80,30 @@ ostream& operator<<(ostream& out, vector<T> v)
 	return out;
 }
 
+template <typename T>
+ostream& operator<<(ostream& out, deque<T> v)
+{
+	for (const auto& it : v)
+	{
+		out << it << " ";
+	}
+	out << "\n";
+	return out;
+}
+
+//bool rec(int step)
+//{
+//	if (step == n)
+//	{
+//
+//	}
+//
+//	if (rec(step + 1)) return true;
+//
+//
+//	return false;
+//}
+
 
 int main()
 {
@@ -145,6 +170,53 @@ int main()
 	q.top();
 	q.pop();
 	q.push(6);
+
+
+	map<string, int> m;
+
+
+	deque<int> dq;
+	map <deque<int>, int> ma;
+
+	int n, k;
+	cin >> n >> k;
+
+	dq.resize(k);
+	for (auto& it : dq) cin >> it;
+	ma[dq]++;
+
+
+	for (int i = k; i < n; ++i)
+	{
+		dq.pop_front();
+		int a; cin >> a;
+		dq.push_back(a);
+		ma[dq]++;
+	}
+
+
+	for (auto it : ma)
+	{
+		//it.first;
+		//it.second;
+		auto [key, amount] = it; // 17 ccp
+
+		cout << key << " | " << amount << "\n";
+	}
+
+
+
+
+
+	// M*Log(N)
+	// M
+
+	map<pair<int, int>, int > sum;
+
+	// N^2
+	for ()
+
+
 
 
 
