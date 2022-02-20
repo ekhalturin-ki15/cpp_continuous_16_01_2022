@@ -12,64 +12,6 @@ using namespace std;
 vector<int> answer; //[2] [3]  [4] 
 vector<vector< pair<int,int> > > descript_answer; //[2] 1-2 [3] 1-2-3  [4]  1-2 3-4
 
-
-deque<pair <int, int>> v;
-
-
-int rect(int n)
-{
-	if (answer[n] != 0) return answer[n]; // Отсечка
-
-	switch (n)
-	{
-	case 2:
-		answer[n] = v[n].first - v[n-1].first;
-		answer[n] *= ((answer[n] < 0) ? -1 : 1);
-		descript_answer[n] = { { v[n - 1].second, v[n].second } };
-		goto end;
-	case 3:
-		answer[n] = v[n].first - v[n-2].first;
-		descript_answer[n] = { { v[n - 1].second, v[n].second },
-			{ v[n - 2].second, v[n - 1].second } };
-		goto end;
-	case 4:
-		answer[n] = v[n].first - v[n - 1].first + rect(n - 2);
-		descript_answer[n] = { { v[n - 1].second, v[n].second },
-			{ v[n - 3].second, v[n - 2].second } };
-	end:
-		return answer[n];
-	}
-
-	int l = v[n].first - v[n - 1].first + rect(n - 2); // сами гвоздики которые использовались Ответ
-	int r = v[n].first - v[n - 2].first + rect(n - 3);
-
-	if (l < r)
-	{
-		answer[n] = l;
-		descript_answer[n] = descript_answer[n - 2];
-		descript_answer[n].push_back({ v[n - 1].second, v[n].second  });
-	}
-	else
-	{
-		answer[n] = r;
-		descript_answer[n] = descript_answer[n - 3];
-		descript_answer[n].push_back({ v[n - 1].second, v[n].second });
-		descript_answer[n].push_back({ v[n - 2].second, v[n - 1].second });
-	}
-	
-	return answer[n];
-
-	//return answer[n] = min(v[n].first - v[n - 1].first + rect(n - 2),
-	//	v[n].first - v[n - 2].first + rect(n - 3));
-}
-
-int& F() 
-{
-	int a;
-	return a;
-}
-
-
 enum Type
 {
 	sum = 1,
@@ -115,6 +57,34 @@ ostream& operator<<(ostream& out, deque<T> v)
 //
 //	return false;
 //}
+vector<int> fenvec;
+vector<int> v;
+
+void UpdateFenvic(int pos, int new_num)
+{
+	//pos =		10011011011
+	//new_pos = 10011011111
+	//new_pos = 10011111111
+	//new_pos = 10111111111
+
+	int n = fenvec.size();
+	for (int  i = pos; i < n; i |= i + 1 )
+	{
+		fenvec[i] += new_num;
+	}
+
+}
+
+int PrefSum(int pos)
+{
+
+	int sum = 0;
+	for (int i = pos; i >= 0; i = (i & (i + 1)) - 1)
+	{
+		sum += fenvec[i];
+	}
+	return sum;
+}
 
 
 int main()
@@ -133,9 +103,8 @@ int main()
 
 
 	cin >> n;
-	vector<int> v(n);
+	v.resize(n);
 	
-
 
 	for (auto& it : v) 
 		cin >> it;
@@ -284,12 +253,47 @@ int main()
 	}
 
 
+	cout << "----------Fenvic-------------------\n";
+	v = cached;
+	//Дерево Фенвика
+
+	fenvec.resize(n);
+
+	for (int i = 0; i < n; ++i)
+	{
+		UpdateFenvic(i, v[i]);
+	}
+
+	for (int i = 0; i < m; ++i)
+	{
+		auto& [type, l, r] = req[i];
+
+		switch (type)
+		{
+		case Type::sum:
+			// O(logn * m)
+			cout << PrefSum(r) - PrefSum(l - 1) << "\n";
+			break;
+
+		case Type::update:
+
+			// O(logn * m)
+			UpdateFenvic(l, r - v[l]);
+			v[l] = r;
+			cout << "Update\n";
+			break;
+		}
+	}
 
 
 
 
+	// 2 0		0 0 0 0 0 0 0 0 0 0 0
+	// 2 0		-1000
+	// -1000	0 0 0 0 0 0 0 0 0 0 0 0
 
-
+	// O(logN)
+	// O(log(N))
 
 
 	// N^2
