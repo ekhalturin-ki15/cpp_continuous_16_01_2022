@@ -6,304 +6,75 @@
 #include <set>
 #include <map>
 #include <unordered_set>
+#include <cmath>
 
 using namespace std;
 
-vector<int> answer; //[2] [3]  [4] 
-vector<vector< pair<int,int> > > descript_answer; //[2] 1-2 [3] 1-2-3  [4]  1-2 3-4
-
-enum Type
-{
-	sum = 1,
-	update = 2
-};
-/// <summary>
-/// 
-/// </summary>
-/// <returns>
-/// 
-/// </returns>
-template <typename T>
-ostream& operator<<(ostream& out, vector<T> v)
-{
-	for (const auto& it : v)
-	{
-		out << it << " ";
-	}
-	out << "\n";
-	return out;
-}
-
-template <typename T>
-ostream& operator<<(ostream& out, deque<T> v)
-{
-	for (const auto& it : v)
-	{
-		out << it << " ";
-	}
-	out << "\n";
-	return out;
-}
-
-//bool rec(int step)
-//{
-//	if (step == n)
-//	{
-//
-//	}
-//
-//	if (rec(step + 1)) return true;
-//
-//
-//	return false;
-//}
-vector<int> fenvec;
-vector<int> v;
-
-void UpdateFenvic(int pos, int new_num)
-{
-	//pos =		10011011011
-	//new_pos = 10011011111
-	//new_pos = 10011111111
-	//new_pos = 10111111111
-
-	int n = fenvec.size();
-	for (int  i = pos; i < n; i |= i + 1 )
-	{
-		fenvec[i] += new_num;
-	}
-
-}
-
-int PrefSum(int pos)
-{
-
-	int sum = 0;
-	for (int i = pos; i >= 0; i = (i & (i + 1)) - 1)
-	{
-		sum += fenvec[i];
-	}
-	return sum;
-}
 
 
 int main()
 {
+	ios_base::sync_with_stdio(false);
+	cin.tie(0);
+
+
 #ifdef _DEBUG
 	FILE* IN, * OUT;
 	freopen_s(&IN, "input.txt", "r", stdin);
 	freopen_s(&OUT, "output.txt", "w", stdout);
 #endif
+	int n, win;
+	cin >> n >> win;
 
+	vector<int> v(n);
 
-	// M*Log(N)
-	// M
-	int n;
-	bool bIsEmpty;
+	for (auto& it : v) cin >> it;
 
+	//O(n * log(n))  Max
+	vector<vector<int>> sparse_table(n, vector<int>(ceil(log2(n+1)) ));
+	vector<int> my_pow;
 
-	cin >> n;
-	v.resize(n);
-	
-
-	for (auto& it : v) 
-		cin >> it;
-
-	vector<int> cached = v;
-
-	///for ()
-	map<pair<int, int>, int > s;
-
-
-	// N^2
-	for (int l = 0; l < n; ++l)
+	for (int k = 1, j = 0; k < n; k *= 2, ++j)
 	{
-		int pred = 0;
-		for (int r = l; r < n; ++r)
+		my_pow.push_back(k);
+		for (int i = 0; i < n; ++i)
 		{
-			pred += v[r];
-			s[{l, r}] = pred;
+			if (j == 0)
+				sparse_table[i][j] = v[i];
+			else
+			{
+				if ((i + k / 2) < n)
+					sparse_table[i][j] = min(sparse_table[i][j - 1], sparse_table[i + k/2][j - 1]);// j-1 высоты размер группы равен k/2
+			}
 		}
 	}
 
-	
+	// 10^6 * sqrt(10^3) = 10^9
 
 
+	// 10^6 * log(10^6) = 18*10^6
 
-	vector<int> pref_sum(n + 1);
-	int pred = 0;
-	for (int r = 1; r <= n; ++r)
+	//int request; cin >> request;
+	for (int i = 0; i < n - win + 1; ++i)
 	{
-		pred += v[r-1];
-		pref_sum[r] = pred;
-	}
-
-	int m; cin >> m;
-
-	vector<tuple<Type, int, int>> req(m);
-	for (int i = 0; i < m; ++i)
-	{
-		auto& [type, l, r] = req[i];
-		int j;
-		cin >> j >> l >> r;
-		type = static_cast<Type>(j);
-
-	}
-
-	//В лоб
-	cout << "----------Brute-------------------\n";
-	for (int i = 0; i < m; ++i)
-	{
-		auto& [type, l, r] = req[i];
-
-		int sum = 0;
-
-		switch (type)
+		int l = i;
+		int r = l + win;
+		int ans = v[l];
+		int h = 0;
+		h = sparse_table.at(0).size() - 1;
+		while (l < r)
 		{
-		case Type::sum:
-			
-			// O(n * m)
-			for (int i = l; i <= r; ++i) sum += v[i]; // (O(n))
-
-			cout << sum << "\n";
-			break;
-
-		case Type::update:
-
-			v[l] = r;
-			cout << "Update\n";
-			break;
+			if (l + my_pow[h] <= r)
+			{
+				ans = min(ans, sparse_table[l][h]);
+				l += my_pow[h];
+			}
+			else
+				--h;
 		}
-
+		// O (log N)
+		cout << ans << "\n";
 	}
-
-	cout << "----------Pref-------------------\n";
-	v = cached;
-	//Префикс суммы
-	for (int i = 0; i < m; ++i)
-	{
-		auto& [type, l, r] = req[i];
-
-		switch (type)
-		{
-		case Type::sum:
-			cout << pref_sum[r + 1] - pref_sum[l] << "\n";
-			break;
-
-		case Type::update:
-
-			// O(n * m)
-			for (int i = l; i < n; ++i)
-				pref_sum[i + 1] +=  r - v[l];// не v[i];
-			cout << "Update\n";
-			break;
-		}
-	}
-
-	cout << "----------Sqrt-------------------\n";
-	v = cached;
-	//Корневая декомпозиция
-
-	int size_group = sqrt(n); // Кол-во эл внутри каждой группы
-	vector<int> sqrt_v(n / size_group);
-
-	for (int i = 0; i < sqrt_v.size() * size_group; ++i)
-	{
-		sqrt_v[i / size_group] += v[i];
-	}
-
-
-	for (int i = 0; i < m; ++i)
-	{
-		auto& [type, l, r] = req[i];
-
-		int sum = 0;
-		switch (type)
-		{
-		case Type::sum:
-			
-			// O(sqrt(N) + sqrt(N) * m = O(sqrt(N) * m) против O(N * m)
-
-			for (int i = l; 
-				i < min(r + 1, 
-					((l / size_group) + 1) * size_group);
-				++i)
-				sum += v[i];
-
-			int group;
-			for (group = ((l / size_group) + 1); group< (r / size_group); ++group)
-				sum += sqrt_v[group];
-
-			for (int i = group * size_group; i <= r; ++i)
-				sum += v[i];
-
-			cout << sum << "\n";
-			break;
-
-		case Type::update:
-
-			// O(n * m)
-			
-			sqrt_v[l / size_group] += r - v[l];
-			v[l] = r;
-
-			cout << "Update\n";
-			break;
-		}
-	}
-
-
-	cout << "----------Fenvic-------------------\n";
-	v = cached;
-	//Дерево Фенвика
-
-	fenvec.resize(n);
-
-	for (int i = 0; i < n; ++i)
-	{
-		UpdateFenvic(i, v[i]);
-	}
-
-	for (int i = 0; i < m; ++i)
-	{
-		auto& [type, l, r] = req[i];
-
-		switch (type)
-		{
-		case Type::sum:
-			// O(logn * m)
-			cout << PrefSum(r) - PrefSum(l - 1) << "\n";
-			break;
-
-		case Type::update:
-
-			// O(logn * m)
-			UpdateFenvic(l, r - v[l]);
-			v[l] = r;
-			cout << "Update\n";
-			break;
-		}
-	}
-
-
-
-
-	// 2 0		0 0 0 0 0 0 0 0 0 0 0
-	// 2 0		-1000
-	// -1000	0 0 0 0 0 0 0 0 0 0 0 0
-
-	// O(logN)
-	// O(log(N))
-
-
-	// N^2
-	///for ()
-
-
-
-
-
-
 
 
 	//i = i | (i + 1)
